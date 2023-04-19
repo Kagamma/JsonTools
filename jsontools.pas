@@ -224,6 +224,24 @@ type
 const
   Hex = ['0'..'9', 'A'..'F', 'a'..'f'];
 
+function StrToFloatDecDef(s: string; rDefault: real):Double;
+var
+  sTemp: string;
+begin
+  sTemp:=StringReplace(s,'.',DecimalSeparator,[rfReplaceAll]);
+  result:=StrToFloatDef(sTemp, rDefault);
+end;
+
+
+function FloattoStrDec(aValor: Real): String;
+var
+  sTmp: string;
+begin
+  sTmp := FormatFloat('0.0000',aValor);
+  sTmp := StringReplace(sTmp, ThousandSeparator, '', [rfReplaceAll, rfIgnoreCase]);
+  Result := StringReplace(sTmp, DecimalSeparator, '.',[rfReplaceAll, rfIgnoreCase]);
+end;
+
 function TJsonToken.Value: string;
 begin
   case Kind of
@@ -846,7 +864,7 @@ begin
     FValue := '0';
     Exit(0);
   end;
-  Result := StrToFloatDef(FValue, 0);
+  Result := StrToFloatDecDef(FValue, 0);
 end;
 
 procedure TJsonNode.SetAsNumber(Value: Double);
@@ -858,7 +876,7 @@ begin
     Clear;
     FKind := nkNumber;
   end;
-  FValue := FloatToStr(Value);
+  FValue := FloatToStrDec(Value);
 end;
 
 function TJsonNode.Add: TJsonNode;
@@ -926,7 +944,7 @@ end;
 
 function TJsonNode.Add(const Name: string; const N: Double): TJsonNode; overload;
 begin
-  Result := Add(nkNumber, Name, FloatToStr(N));
+  Result := Add(nkNumber, Name, FloatToStrDec(N));
 end;
 
 function TJsonNode.Add(const Name: string; const S: string): TJsonNode; overload;
